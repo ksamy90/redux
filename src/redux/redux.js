@@ -4,11 +4,11 @@ var store = createStore((state = { count: 0 }, action) => {
   switch (action.type) {
     case "INCREMENT":
       return {
-        count: state.count + action.increment,
+        count: state.count + action.incrementBy,
       };
     case "DECREMENT":
       return {
-        count: state.count - action.decrement,
+        count: state.count - action.decrementBy,
       };
     case "RESET":
       return {
@@ -28,31 +28,55 @@ store.subscribe(() => {
 });
 
 // Action creator
-const incrementCount = (incrementBy) => {
-  var increment = typeof incrementBy === "number" ? incrementBy : 1;
-  return { type: "INCREMENT", increment };
+// const incrementCount = (payload = {}) => {
+//   var incrementBy =
+//     typeof payload.incrementBy === "number" ? payload.incrementBy : 1;
+//   return { type: "INCREMENT", incrementBy };
+// };
+
+const incrementCount = ({ incrementBy = 1 } = {}) => {
+  return {
+    type: "INCREMENT",
+    incrementBy,
+  };
 };
 
-const decrementCount = (decrementBy) => {
-  var decrement = typeof decrementBy === "number" ? decrementBy : 1;
-  return { type: "DECREMENT", decrement };
+// const decrementCount = (payload = {}) => {
+//   var decrementBy =
+//     typeof payload.decrementBy === "number" ? payload.decrementBy : 1;
+//   return { type: "DECREMENT", decrementBy };
+// };
+
+const decrementCount = ({ decrementBy = 1 } = {}) => {
+  return {
+    type: "DECREMENT",
+    decrementBy,
+  };
 };
 
 const resetCount = () => {
   return { type: "RESET" };
 };
 
-const setCount = () => {
-  return { type: "SET", count: 145 };
+// const setCount = (payload) => ({
+//   type: "SET",
+//   count: payload.count,
+// });
+
+const setCount = ({ count }) => {
+  return {
+    type: "SET",
+    count,
+  };
 };
 
 // ACTION ('objects in redux')
-store.dispatch(incrementCount(11)); // 11
-store.dispatch(incrementCount(3)); // 14
+store.dispatch(incrementCount({ incrementBy: 11 })); // 11
+store.dispatch(incrementCount()); // 14
 store.dispatch(incrementCount()); // 13
 store.dispatch(incrementCount()); // 14
 store.dispatch(resetCount()); // 0
-store.dispatch(decrementCount(8)); // -8
+store.dispatch(decrementCount()); // -8
 store.dispatch(decrementCount()); // -9
 
-store.dispatch(setCount()); // 145
+store.dispatch(setCount({ count: 145 })); // 145
