@@ -1,6 +1,6 @@
 import { createStore } from "redux";
 
-var store = createStore((state = { count: 0 }, action) => {
+var countReducer = (state = { count: 0 }, action) => {
   switch (action.type) {
     case "INCREMENT":
       return {
@@ -21,18 +21,15 @@ var store = createStore((state = { count: 0 }, action) => {
     default:
       return state;
   }
-});
+};
+
+var store = createStore(countReducer);
 
 store.subscribe(() => {
   console.log(store.getState());
 });
 
 // Action creator
-// const incrementCount = (payload = {}) => {
-//   var incrementBy =
-//     typeof payload.incrementBy === "number" ? payload.incrementBy : 1;
-//   return { type: "INCREMENT", incrementBy };
-// };
 
 const incrementCount = ({ incrementBy = 1 } = {}) => {
   return {
@@ -73,10 +70,11 @@ const setCount = ({ count }) => {
 // ACTION ('objects in redux')
 store.dispatch(incrementCount({ incrementBy: 11 })); // 11
 store.dispatch(incrementCount()); // 14
-store.dispatch(incrementCount()); // 13
-store.dispatch(incrementCount()); // 14
+store.dispatch(incrementCount()); // 15
+store.dispatch(incrementCount()); // 16
 store.dispatch(resetCount()); // 0
-store.dispatch(decrementCount()); // -8
-store.dispatch(decrementCount()); // -9
+store.dispatch(decrementCount()); // -1
+store.dispatch(decrementCount()); // -2
+store.dispatch(decrementCount({ decrementBy: 13 })); // -15
 
 store.dispatch(setCount({ count: 145 })); // 145
