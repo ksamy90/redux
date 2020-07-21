@@ -24,19 +24,34 @@ var addExpense = ({
     type: "ADD_EXPENSE",
     expense: {
       id: uuid(),
-      description,
-      note,
-      amount,
-      createdAt,
+      description: description,
+      note: note,
+      amount: amount,
+      createdAt: createdAt,
     },
   };
 };
 
 // REMOVE_EXPENSE
-const removeExpense = (payload = {}) => {
+// const removeExpense = (payload = {}) => {
+//   return {
+//     type: "REMOVE_EXPENSE",
+//     id: payload.id,
+//   };
+// };
+
+const removeExpense = ({ id } = {}) => {
   return {
     type: "REMOVE_EXPENSE",
-    id: payload.id,
+    id,
+  };
+};
+
+const editExpense = (id, updates) => {
+  return {
+    type: "EDIT_EXPENSE",
+    id,
+    updates,
   };
 };
 
@@ -48,6 +63,17 @@ var expensesReducer = (state = expensesReducerDefaultState, action) => {
       return [...state, action.expense];
     case "REMOVE_EXPENSE":
       return state.filter((expense) => expense.id !== action.id);
+    case "EDIT_EXPENSE":
+      return state.map((expense) => {
+        if (expense.id === action.id) {
+          return {
+            ...expense,
+            ...action.updates,
+          };
+        } else {
+          return expense;
+        }
+      });
     default:
       return state;
   }
@@ -88,3 +114,10 @@ var expenseTwo = store.dispatch(
 );
 
 store.dispatch(removeExpense({ id: expenseOne.expense.id }));
+
+store.dispatch(
+  editExpense(expenseTwo.expense.id, {
+    description: "trip to Manchester,UK",
+    amount: 1000,
+  })
+);
