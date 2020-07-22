@@ -93,17 +93,13 @@ var expensesReducerDefaultState = [];
 var expensesReducer = (state = expensesReducerDefaultState, action) => {
   switch (action.type) {
     case "ADD_EXPENSE":
-      return [...state, action.expense];
+      return state.concat(action.expense); // [...state, action.expense]
     case "REMOVE_EXPENSE":
       return state.filter((expense) => expense.id !== action.id);
     case "EDIT_EXPENSE":
       return state.map((expense) => {
         if (expense.id === action.id) {
-          // return {
-          //   ...expense,
-          //   ...action.updates,
-          // };
-          return Object.assign({}, expense, action.updates);
+          return Object.assign({}, expense, action.updates); // object spread {...expense, ...action.updates}
         } else {
           return expense;
         }
@@ -144,10 +140,16 @@ var filtersReducer = (state = filtersReducerDefaultState, action) => {
 // selectors(querying the redux state)
 var visibleExpenses = (expenses, filters) => {
   return expenses.filter((expense) => {
+    var startDateMatch =
+      typeof filters.startDate !== "number" ||
+      expense.createdAt >= filters.startDate;
+    var endDateMatch =
+      typeof filters.endDate !== "number" ||
+      expense.createdAt <= filters.endDate;
     var textMatch = expense.description
       .toLowerCase()
       .includes(filters.text.toLowerCase());
-    return textMatch;
+    return textMatch && startDateMatch && endDateMatch;
   });
 };
 
@@ -165,7 +167,7 @@ store.subscribe(() => {
 });
 
 var expenseOne = store.dispatch(
-  addExpense({ description: "Electric Bills", amount: 200 })
+  addExpense({ description: "Electric Bills", amount: 200, createdAt: 4500 })
 );
 var expenseTwo = store.dispatch(
   addExpense({ description: "Reducer in hooks", amount: 500 })
@@ -177,9 +179,12 @@ store.dispatch(
   editExpense(expenseTwo.expense.id, {
     description: "trip to Manchester,UK",
     amount: 1000,
+    createdAt: 6700,
   })
 );
 
-store.dispatch(setTextFilter("el"));
+// store.dispatch(setTextFilter("el"));
+
+store.dispatch(setStartDate(6000));
 
 // london, barcelona (elo) --> barcelona
