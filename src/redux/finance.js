@@ -1,6 +1,7 @@
 import { createStore, combineReducers } from "redux";
 import uuid from "uuid";
 
+// expenses action creators
 // ADD_EXPENSE
 // var addExpense = (payload = {}) => {
 //   return {
@@ -55,6 +56,38 @@ const editExpense = (id, updates) => {
   };
 };
 
+// filters action creators
+var setTextFilter = (text = "") => {
+  return {
+    type: "SET_TEXT_FILTER",
+    text,
+  };
+};
+
+var sortByAmount = () => {
+  return {
+    type: "SORT_BY_AMOUNT",
+  };
+};
+var sortByDate = () => {
+  return {
+    type: "SORT_BY_DATE",
+  };
+};
+
+var setStartDate = (startDate) => {
+  return {
+    type: "SET_START_DATE",
+    startDate,
+  };
+};
+var setEndDate = (endDate) => {
+  return {
+    type: "SET_END_DATE",
+    endDate,
+  };
+};
+
 // expenses reducer
 var expensesReducerDefaultState = [];
 var expensesReducer = (state = expensesReducerDefaultState, action) => {
@@ -91,10 +124,22 @@ var filtersReducerDefaultState = {
 };
 var filtersReducer = (state = filtersReducerDefaultState, action) => {
   switch (action.type) {
+    case "SET_TEXT_FILTER":
+      return Object.assign({}, state, { text: action.text });
+    case "SORT_BY_AMOUNT":
+      return Object.assign({}, state, { sortBy: "amount" });
+    case "SORT_BY_DATE":
+      return Object.assign({}, state, { sortBy: "date" });
+    case "SET_START_DATE":
+      return Object.assign({}, state, { startDate: action.startDate });
+    case "SET_END_DATE":
+      return Object.assign({}, state, { endDate: action.endDate });
     default:
       return state;
   }
 };
+
+// you guys are REDUX NINJAS(TRAINEE ninjas)
 
 var store = createStore(
   combineReducers({
@@ -122,3 +167,9 @@ store.dispatch(
     amount: 1000,
   })
 );
+
+store.dispatch(setTextFilter("buy groceries"));
+store.dispatch(sortByAmount());
+store.dispatch(sortByDate());
+store.dispatch(setStartDate(150));
+store.dispatch(setEndDate(345));
