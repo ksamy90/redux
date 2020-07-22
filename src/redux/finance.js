@@ -141,6 +141,16 @@ var filtersReducer = (state = filtersReducerDefaultState, action) => {
 
 // you guys are REDUX NINJAS(TRAINEE ninjas)
 
+// selectors(querying the redux state)
+var visibleExpenses = (expenses, filters) => {
+  return expenses.filter((expense) => {
+    var textMatch = expense.description
+      .toLowerCase()
+      .includes(filters.text.toLowerCase());
+    return textMatch;
+  });
+};
+
 var store = createStore(
   combineReducers({
     expenses: expensesReducer,
@@ -149,7 +159,9 @@ var store = createStore(
 );
 
 store.subscribe(() => {
-  console.log(store.getState());
+  var state = store.getState();
+  var showExpenses = visibleExpenses(state.expenses, state.filters);
+  console.log(showExpenses);
 });
 
 var expenseOne = store.dispatch(
@@ -159,7 +171,7 @@ var expenseTwo = store.dispatch(
   addExpense({ description: "Reducer in hooks", amount: 500 })
 );
 
-store.dispatch(removeExpense({ id: expenseOne.expense.id }));
+// store.dispatch(removeExpense({ id: expenseOne.expense.id }));
 
 store.dispatch(
   editExpense(expenseTwo.expense.id, {
@@ -168,8 +180,6 @@ store.dispatch(
   })
 );
 
-store.dispatch(setTextFilter("buy groceries"));
-store.dispatch(sortByAmount());
-store.dispatch(sortByDate());
-store.dispatch(setStartDate(150));
-store.dispatch(setEndDate(345));
+store.dispatch(setTextFilter("el"));
+
+// london, barcelona (elo) --> barcelona
