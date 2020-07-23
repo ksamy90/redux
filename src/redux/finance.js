@@ -139,18 +139,26 @@ var filtersReducer = (state = filtersReducerDefaultState, action) => {
 
 // selectors(querying the redux state)
 var visibleExpenses = (expenses, filters) => {
-  return expenses.filter((expense) => {
-    var startDateMatch =
-      typeof filters.startDate !== "number" ||
-      expense.createdAt >= filters.startDate;
-    var endDateMatch =
-      typeof filters.endDate !== "number" ||
-      expense.createdAt <= filters.endDate;
-    var textMatch = expense.description
-      .toLowerCase()
-      .includes(filters.text.toLowerCase());
-    return textMatch && startDateMatch && endDateMatch;
-  });
+  return expenses
+    .filter((expense) => {
+      var startDateMatch =
+        typeof filters.startDate !== "number" ||
+        expense.createdAt >= filters.startDate;
+      var endDateMatch =
+        typeof filters.endDate !== "number" ||
+        expense.createdAt <= filters.endDate;
+      var textMatch = expense.description
+        .toLowerCase()
+        .includes(filters.text.toLowerCase());
+      return textMatch && startDateMatch && endDateMatch;
+    })
+    .sort((a, b) => {
+      if (filters.sortBy === "date") {
+        return a.createdAt < b.createdAt ? 1 : -1;
+      } else if (filters.sortBy === "amount") {
+        return a.amount < b.amount ? 1 : -1;
+      }
+    });
 };
 
 var store = createStore(
@@ -167,7 +175,12 @@ store.subscribe(() => {
 });
 
 var expenseOne = store.dispatch(
-  addExpense({ description: "Electric Bills", amount: 200, createdAt: 4500 })
+  addExpense({
+    description: "Electric Bills",
+    amount: 200,
+    createdAt: 4500,
+    amount: 5000,
+  })
 );
 var expenseTwo = store.dispatch(
   addExpense({ description: "Reducer in hooks", amount: 500 })
@@ -178,13 +191,24 @@ var expenseTwo = store.dispatch(
 store.dispatch(
   editExpense(expenseTwo.expense.id, {
     description: "trip to Manchester,UK",
-    amount: 1000,
+    amount: 8000,
     createdAt: 6700,
   })
 );
 
-// store.dispatch(setTextFilter("el"));
+var expenseThree = store.dispatch(
+  addExpense({
+    description: "Hiking",
+    amount: 7000,
+    createdAt: 15700,
+  })
+);
 
-store.dispatch(setStartDate(6000));
+// store.dispatch(setTextFilter("kin"));
+store.dispatch(sortByAmount());
+store.dispatch(sortByDate());
+
+//store.dispatch(setStartDate(5000));
+// store.dispatch(setEndDate(7000));
 
 // london, barcelona (elo) --> barcelona
